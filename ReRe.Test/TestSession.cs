@@ -26,7 +26,6 @@ namespace ReRe.Test
 
         public void Set(string key, byte[] value) => _sessionStorage[key] = value;
 
-        // Corriger la signature pour correspondre à l'interface
         public bool TryGetValue(string key, out byte[]? value) 
             => _sessionStorage.TryGetValue(key, out value);
     }
@@ -57,8 +56,9 @@ namespace ReRe.Test
 
         public static int? GetInt32(this ISession session, string key)
         {
-            if (session.TryGetValue(key, out var value) && value.Length == 4)
+            if (session.TryGetValue(key, out var value) && value != null && value.Length >= 4)
             {
+                // Correction : s'assurer que nous lisons correctement les 4 bytes
                 return BitConverter.ToInt32(value, 0);
             }
             return null;
