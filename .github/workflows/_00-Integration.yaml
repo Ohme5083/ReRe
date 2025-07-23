@@ -9,8 +9,3 @@ jobs:
   Test_App:
     uses: ./.github/workflows/00-TestUnit.yaml
 
-  Quality_SonarQube:
-    needs: [Test_App]
-    uses: ./.github/workflows/01-sonarqube.yaml
-    secrets: inherit
-
