@@ -56,14 +56,14 @@ jobs:
                   SA_PASSWORD: "toto12345*"
                   ACCEPT_EULA: "Y"
                 ports:
-                  - "1433:1433"
+                  - "1443:1443"
                 networks:
                   - rerenet
 
               rere.ui:
                 image: ghcr.io/ohme5083/rere:${{ github.sha }}
                 environment:
-                  - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ReReDb;User Id=sa;Password=toto12345*;Encrypt=False;TrustServerCertificate=True;
+                  - ConnectionStrings__DefaultConnection=Server=sqlserver,1443;Database=ReReDb;User Id=sa;Password=toto12345*;Encrypt=False;TrustServerCertificate=True;
                 depends_on:
                   - sqlserver
                 networks:
