@@ -1,0 +1,70 @@
+﻿@model List<ReRe.Data.Models.CommentaireModel>
+
+@if (Model != null && Model.Any())
+{
+    <div class="list-unstyled">
+        @foreach (var commentaire in Model)
+        {
+            var isEditing = ViewBag.EditCommentId != null && ViewBag.EditCommentId == commentaire.Id;
+
+            <div class="card mb-3 border-start border-3 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <strong class="text-primary">@commentaire.UserModel?.Prenom @commentaire.UserModel?.Nom</strong>
+                        <small class="text-muted">@commentaire.Date.ToString("g")</small>
+                    </div>
+
+                    @if (isEditing)
+                    {
+                        <form asp-action="Edit" asp-controller="CommentaireModels" method="post">
+                            <input type="hidden" name="Id" value="@commentaire.Id" />
+                            <input type="hidden" name="RessourceId" value="@commentaire.RessourceId" />
+                            <div class="mb-2">
+                                <textarea name="Comment" class="form-control" rows="3">@commentaire.Comment</textarea>
+                            </div>
+                            <div class="d-flex justify-content-end gap-2">
+                                <button type="submit" class="btn btn-sm btn-primary">Enregistrer</button>
+                                <a href="@Url.Action("Details", "Ressources", new { id = commentaire.RessourceId })" class="btn btn-sm btn-secondary">Annuler</a>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <p class="card-text">@commentaire.Comment</p>
+                        <div class="d-flex gap-2">
+                            @if (ViewBag.RoleId > 0)
+                            {
+                                <a class="btn btn-sm btn-outline-secondary"
+                                   asp-controller="CommentaireModels"
+                                   asp-action="Create"
+                                   asp-route-ressourceId="@commentaire.RessourceId"
+                                   asp-route-commentaireId="@commentaire.Id">
+                                    Répondre
+                                </a>
+                            }
+                            @if ((ViewBag.UserId == commentaire.UserModel?.Id) || ViewBag.RoleId > 2)
+                            {
+                                <a class="btn btn-sm btn-outline-warning"
+                                   href="@Url.Action("Edit", "CommentaireModels", new { id = commentaire.Id })">
+                                    Modifier
+                                </a>
+                            }
+                        </div>
+                    }
+
+                    @* Affichage récursif des réponses *@
+                    @if (commentaire.CommentairesEnfants != null && commentaire.CommentairesEnfants.Any())
+                    {
+                        <div class="mt-3 ps-4">
+                            @await Html.PartialAsync("_Commentaires", commentaire.CommentairesEnfants.ToList())
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p class="text-muted">Aucun commentaire pour le moment.</p>
+}

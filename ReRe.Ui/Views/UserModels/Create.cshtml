@@ -1,0 +1,65 @@
+﻿@model ReRe.Data.Models.UserModel
+
+@{
+    ViewData["Title"] = "Inscription";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <h1 class="text-center mb-3">@ViewData["Title"]</h1>
+            <p class="text-center text-muted mb-4">Remplissez ce formulaire pour créer un compte.</p>
+
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="card shadow-sm">
+                    <div class="card-body">
+
+                        <div class="mb-3">
+                            <label asp-for="Nom" class="form-label"></label>
+                            <input asp-for="Nom" class="form-control" />
+                            <span asp-validation-for="Nom" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Prenom" class="form-label"></label>
+                            <input asp-for="Prenom" class="form-control" />
+                            <span asp-validation-for="Prenom" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" type="email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="mot_de_passe" class="form-label">Mot de passe</label>
+                            <input asp-for="mot_de_passe" type="password" class="form-control" />
+                            <span asp-validation-for="mot_de_passe" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">S'inscrire</button>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+
+            <div class="text-center mt-3">
+                <p class="mb-1">Vous avez déjà un compte ?</p>
+                <a asp-action="Login" class="btn btn-outline-secondary">Se connecter</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

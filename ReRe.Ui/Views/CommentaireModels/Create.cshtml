@@ -1,0 +1,18 @@
+﻿@model ReRe.Data.Models.CommentaireModel
+
+<form asp-action="Create" method="post" class="mt-4">
+    <!-- Champs cachés -->
+    <input type="hidden" asp-for="UserId" value="@ViewBag.Id" />
+    <input type="hidden" asp-for="RessourceId" value="@ViewData["RessourceId"]" />
+    <input type="hidden" asp-for="CommentaireId" value="@ViewData["CommentaireId"]" />
+
+    <div class="mb-3">
+        <label asp-for="Comment" class="form-label fw-semibold">Commentaire</label>
+        <textarea asp-for="Comment" class="form-control" rows="3" required></textarea>
+        <span asp-validation-for="Comment" class="text-danger small"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        <i class="bi bi-send me-1"></i> Envoyer
+    </button>
+</form>

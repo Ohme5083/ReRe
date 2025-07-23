@@ -1,0 +1,75 @@
+﻿@model IEnumerable<ReRe.Data.Models.RessourceModel>
+
+@{
+    ViewData["Title"] = "Liste des ressources";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Ressources</h1>
+    @if (ViewBag.RoleId > 0)
+    {
+        <a asp-action="Create" class="btn btn-success d-flex align-items-center gap-1">
+            <i class="bi bi-plus-circle"></i> Nouvelle ressource
+        </a>
+    }
+</div>
+
+<form method="get" class="row g-3 align-items-end mb-4">
+    <div class="col-md-4">
+        <label for="search" class="form-label">Recherche</label>
+        <input type="text" class="form-control" id="search" name="search" value="@ViewBag.SearchQuery" placeholder="Nom, description, type, etc.">
+    </div>
+    <div class="col-md-4">
+        <label for="sort" class="form-label">Trier par</label>
+        <select class="form-select" id="sort" name="sort">
+            <option value="nom" selected="@(ViewBag.SortOrder == "nom")">Nom</option>
+            <option value="categorie" selected="@(ViewBag.SortOrder == "categorie")">Catégorie</option>
+            <option value="type" selected="@(ViewBag.SortOrder == "type")">Type</option>
+            <option value="date" selected="@(ViewBag.SortOrder == "date")">Date de création</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <button type="submit" class="btn btn-primary w-100">
+            <i class="bi bi-search"></i> Rechercher
+        </button>
+    </div>
+</form>
+
+<div class="row g-4">
+    @foreach (var item in Model)
+    {
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">@item.Name</h5>
+
+                    <div class="mb-2">
+                        <span class="badge bg-info text-dark me-1">@item.Categorie</span>
+                        <span class="badge bg-secondary">@item.Type?.Libelle</span>
+                    </div>
+
+                    <p class="card-text text-truncate" style="flex-grow: 1; max-height: 4.5em; overflow: hidden;">
+                        @item.Description
+                    </p>
+
+                    <small class="text-muted mb-3">@item.CreationDate.ToString("dd/MM/yyyy")</small>
+
+                    <div class="mt-auto d-flex justify-content-end gap-2">
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="Détails">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        @if (ViewBag.Nom == item.Creator || ViewBag.RoleId > 2)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning" title="Modifier">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

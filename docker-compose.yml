@@ -1,0 +1,6 @@
+services:
+  rere.ui:
+    image: ${DOCKER_REGISTRY-}rereui
+    build:
+      context: .
+      dockerfile: ReRe.Ui/Dockerfile

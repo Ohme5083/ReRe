@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "M'identifier";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+
+                    @if (TempData["Message"] != null)
+                    {
+                        <div class="alert alert-success text-center">@TempData["Message"]</div>
+                    }
+
+                    <form method="post">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email :</label>
+                            <input type="email" class="form-control" id="email" name="email" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Mot de passe :</label>
+                            <input type="password" class="form-control" id="password" name="password" required />
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary">Connexion</button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <p class="mb-1">Pas encore de compte ?</p>
+                        <a asp-controller="UserModels" asp-action="Create" class="btn btn-outline-secondary">
+                            Créer un compte
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

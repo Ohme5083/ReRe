@@ -1,0 +1,54 @@
+﻿@model ReRe.Data.Models.RessourceModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1 class="mb-4">Modifier la ressource</h1>
+
+<div class="row">
+    <div class="col-md-6 col-lg-5">
+        <form asp-action="Edit" novalidate>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Categorie" class="form-label"></label>
+                <input asp-for="Categorie" class="form-control" />
+                <span asp-validation-for="Categorie" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="TypeId" class="form-label"></label>
+                <select asp-for="TypeId" asp-items="ViewBag.Types" class="form-select"></select>
+                <span asp-validation-for="TypeId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CreationDate" class="form-label"></label>
+                <input asp-for="CreationDate" type="date" class="form-control" />
+                <span asp-validation-for="CreationDate" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+            <a asp-action="Index" class="btn btn-secondary ms-2">Retour à la liste</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

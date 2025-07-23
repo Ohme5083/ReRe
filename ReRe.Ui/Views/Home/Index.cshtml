@@ -1,0 +1,32 @@
+﻿@model List<ReRe.Data.Models.RessourceModel>
+
+@{
+    ViewData["Title"] = "Accueil";
+}
+
+<div class="text-center mb-5">
+    <h1 class="display-4">Ressources relationnelles</h1>
+</div>
+
+@if (ViewBag.latestResources != null)
+{
+    <h3>Dernières ressources</h3>
+
+    <div class="list-group">
+        @foreach (var ressource in ViewBag.latestResources)
+        {
+            <a asp-controller="RessourceModels" asp-action="Details" asp-route-id="@ressource.Id" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">@ressource.Name</h5>
+                    <small>@ressource.CreationDate.ToString("dd/MM/yyyy")</small>
+                </div>
+                <p class="mb-1 text-truncate" style="max-width: 600px;">@ressource.Description</p>
+                <small class="text-muted">@ressource.Categorie — @ressource.Type</small>
+            </a>
+        }
+    </div>
+}
+else
+{
+    <p class="text-muted">Aucune ressource disponible pour le moment.</p>
+}

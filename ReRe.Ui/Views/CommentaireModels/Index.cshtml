@@ -1,0 +1,72 @@
+﻿@model IEnumerable<ReRe.Data.Models.CommentaireModel>
+
+@{
+    ViewData["Title"] = "Liste des commentaires";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Commentaires</h1>
+    <a asp-action="Create" class="btn btn-success d-flex align-items-center gap-1">
+        <i class="bi bi-plus-circle"></i> Nouveau commentaire
+    </a>
+</div>
+
+<form method="get" class="row g-3 align-items-end mb-4">
+    <div class="col-md-4">
+        <label for="search" class="form-label">Recherche</label>
+        <input type="text" class="form-control" id="search" name="search" value="@ViewBag.SearchQuery" placeholder="Nom, contenu, ressource...">
+    </div>
+    <div class="col-md-4">
+        <label for="sort" class="form-label">Trier par</label>
+        <select class="form-select" id="sort" name="sort">
+            <option value="date" selected="@(ViewBag.SortOrder == "date")">Date</option>
+            <option value="auteur" selected="@(ViewBag.SortOrder == "auteur")">Auteur</option>
+            <option value="ressource" selected="@(ViewBag.SortOrder == "ressource")">Ressource</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <button type="submit" class="btn btn-primary w-100">
+            <i class="bi bi-search"></i> Rechercher
+        </button>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Auteur</th>
+                <th>Commentaire</th>
+                <th>Ressource</th>
+                <th>Réponse à</th>
+                <th>Date</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.UserModel?.Prenom @item.UserModel?.Nom</td>
+                    <td class="text-truncate" style="max-width: 300px;">@item.Comment</td>
+                    <td>@item.RessourceModel?.Categorie</td>
+                    <td>@(item.CommentaireParent != null ? $"#{item.CommentaireParent.Id}" : "-")</td>
+                    <td>@item.Date.ToString("g")</td>
+                    <td class="text-end">
+                        <div class="btn-group">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning" title="Modifier">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="Détails">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,43 @@
+﻿@model ReRe.Data.Models.RessourceModel
+
+@{
+    ViewData["Title"] = "Suppression de ressource";
+}
+
+<div class="container">
+    <h1 class="mb-4 text-danger">Supprimer la ressource</h1>
+
+    <div class="alert alert-warning">
+        <h4 class="alert-heading">Es-tu sûr de vouloir supprimer cette ressource ?</h4>
+        <p>Cette action est irréversible.</p>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Nom</dt>
+                <dd class="col-sm-9">@Model.Name</dd>
+
+                <dt class="col-sm-3">Description</dt>
+                <dd class="col-sm-9">@Model.Description</dd>
+
+                <dt class="col-sm-3">Catégorie</dt>
+                <dd class="col-sm-9">@Model.Categorie</dd>
+
+                <dt class="col-sm-3">Type</dt>
+                <dd class="col-sm-9">@Model.Type</dd>
+
+                <dt class="col-sm-3">Date de création</dt>
+                <dd class="col-sm-9">@Model.CreationDate.ToString("dd/MM/yyyy")</dd>
+            </dl>
+        </div>
+    </div>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger me-2">
+            <i class="bi bi-trash me-1"></i> Supprimer
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">Annuler</a>
+    </form>
+</div>
