@@ -1,48 +1,39 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using System.Text;
 
 namespace ReRe.Test
 {
-    public class DummySession : ISession
+    /// <summary>
+    /// Implémentation de session pour les tests
+    /// </summary>
+    public class TestSession : ISession
     {
-        private readonly Dictionary<string, byte[]> _sessionStorage = new Dictionary<string, byte[]>();
+        private readonly Dictionary<string, byte[]> _sessionStorage = new();
 
         public bool IsAvailable => true;
         public string Id => Guid.NewGuid().ToString();
         public IEnumerable<string> Keys => _sessionStorage.Keys;
 
-        public void Clear()
-        {
-            _sessionStorage.Clear();
-        }
+        public void Clear() => _sessionStorage.Clear();
 
-        public Task CommitAsync(CancellationToken cancellationToken = default)
-        {
-            return Task.CompletedTask;
-        }
+        public Task CommitAsync(CancellationToken cancellationToken = default) 
+            => Task.CompletedTask;
 
-        public Task LoadAsync(CancellationToken cancellationToken = default)
-        {
-            return Task.CompletedTask;
-        }
+        public Task LoadAsync(CancellationToken cancellationToken = default) 
+            => Task.CompletedTask;
 
-        public void Remove(string key)
-        {
-            _sessionStorage.Remove(key);
-        }
+        public void Remove(string key) => _sessionStorage.Remove(key);
 
-        public void Set(string key, byte[] value)
-        {
-            _sessionStorage[key] = value;
-        }
+        public void Set(string key, byte[] value) => _sessionStorage[key] = value;
 
-        public bool TryGetValue(string key, out byte[]? value)
-        {
-            return _sessionStorage.TryGetValue(key, out value);
-        }
+        public bool TryGetValue(string key, out byte[]? value) 
+            => _sessionStorage.TryGetValue(key, out value);
     }
 
-    public static class SessionExtensions
+    /// <summary>
+    /// Extensions pour faciliter l'utilisation des sessions dans les tests
+    /// </summary>
+    public static class TestSessionExtensions
     {
         public static void SetString(this ISession session, string key, string value)
         {
