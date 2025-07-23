@@ -5,7 +5,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=5050
       - ASPNETCORE_HTTPS_PORTS=5051
     ports:
-      - "5050"
+      - "5050:8080"
       - "5051"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
