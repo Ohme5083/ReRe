@@ -63,7 +63,7 @@ jobs:
               rere.ui:
                 image: ghcr.io/ohme5083/rere:${{ github.sha }}
                 environment:
-                  - ConnectionStrings__DefaultConnection=Server=sqlserver-rere,1443;Database=ReReDb;User Id=sa;Password=toto12345*;Encrypt=False;TrustServerCertificate=True;
+                  - ConnectionStrings__DefaultConnection=Server=sqlserver-rere,1433;Database=ReReDb;User Id=sa;Password=toto12345*;Encrypt=False;TrustServerCertificate=True;
                 depends_on:
                   - sqlserver-rere
                 networks:
