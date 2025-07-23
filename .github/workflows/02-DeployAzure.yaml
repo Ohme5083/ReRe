@@ -69,7 +69,7 @@ jobs:
                 networks:
                   - rerenet
                 ports:
-                  - "5050:5050"
+                  - "5050:8080"
 
             networks:
               rerenet:
