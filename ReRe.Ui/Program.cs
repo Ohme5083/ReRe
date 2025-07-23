@@ -23,11 +23,17 @@ builder.Services.AddControllersWithViews();
 var app = builder.Build();
 
 // Pipeline HTTP
-if (!app.Environment.IsDevelopment())
+// Pipeline HTTP
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles(); // Nécessaire si vous avez des fichiers statiques
