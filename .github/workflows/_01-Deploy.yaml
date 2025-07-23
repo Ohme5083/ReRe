@@ -10,6 +10,11 @@ permissions:
   packages: write
 
 jobs:
+  Quality_SonarQube:
+    uses: ./.github/workflows/01-sonarqube.yaml
+    secrets: inherit
+
   deploy:
+    needs: Quality_SonarQube
     uses: ./.github/workflows/02-DeployAzure.yaml
     secrets: inherit
