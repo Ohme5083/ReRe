@@ -264,7 +264,9 @@ namespace ReRe.Test
             
             Assert.Single(users);
             Assert.Equal("Jean", users[0].Prenom);
-            Assert.Equal("Jean", viewResult.ViewBag.SearchQuery);
+            
+            // Corriger l'accès au ViewBag - utiliser le contrôleur, pas le ViewResult
+            Assert.Equal("Jean", _controller.ViewBag.SearchQuery);
         }
 
         [Fact]
@@ -276,7 +278,9 @@ namespace ReRe.Test
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsAssignableFrom<IEnumerable<UserModel>>(viewResult.Model);
-            Assert.Equal("role", viewResult.ViewBag.SortOrder);
+            
+            // Corriger l'accès au ViewBag - utiliser le contrôleur, pas le ViewResult
+            Assert.Equal("role", _controller.ViewBag.SortOrder);
         }
 
         #endregion
@@ -337,7 +341,8 @@ namespace ReRe.Test
         {
             // Arrange
             var userToEdit = await _context.Utilisateurs.FindAsync(1);
-            userToEdit!.Prenom = "Jean-Modifié";
+            Assert.NotNull(userToEdit);
+            userToEdit.Prenom = "Jean-Modifié";
 
             // Act
             var result = await _controller.Edit(1, userToEdit);
@@ -348,7 +353,8 @@ namespace ReRe.Test
 
             // Vérifier que la modification a été sauvegardée
             var updatedUser = await _context.Utilisateurs.FindAsync(1);
-            Assert.Equal("Jean-Modifié", updatedUser!.Prenom);
+            Assert.NotNull(updatedUser);
+            Assert.Equal("Jean-Modifié", updatedUser.Prenom);
         }
 
         #endregion
@@ -403,7 +409,8 @@ namespace ReRe.Test
 
             // Vérifier que le mot de passe a été mis à jour
             var user = await _context.Utilisateurs.FindAsync(1);
-            Assert.Equal("nouveauMotDePasse", user!.mot_de_passe);
+            Assert.NotNull(user);
+            Assert.Equal("nouveauMotDePasse", user.mot_de_passe);
 
             // Vérifier que la session a été mise à jour
             Assert.Equal("nouveauMotDePasse", _controller.HttpContext.Session.GetString("UserPassword"));

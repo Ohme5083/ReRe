@@ -26,6 +26,7 @@ namespace ReRe.Test
 
         public void Set(string key, byte[] value) => _sessionStorage[key] = value;
 
+        // Corriger la signature pour correspondre à l'interface
         public bool TryGetValue(string key, out byte[]? value) 
             => _sessionStorage.TryGetValue(key, out value);
     }
