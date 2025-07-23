@@ -1,5 +1,7 @@
 services:
   rere.ui:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
     image: ${DOCKER_REGISTRY-}rereui
     build:
       context: .
