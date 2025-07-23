@@ -1,0 +1,135 @@
+name: 01 - SonarQube Analysis
+
+on:
+  workflow_call
+
+jobs:
+  sonarcloud:
+    name: SonarCloud Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET 9
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Cache SonarCloud packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.sonar/cache
+        key: ${{ runner.os }}-sonar
+        restore-keys: ${{ runner.os }}-sonar
+
+    - name: Install SonarCloud scanner
+      run: dotnet tool install --global dotnet-sonarscanner
+
+    - name: Remove incompatible sonar-project.properties
+      run: |
+        if [ -f "sonar-project.properties" ]; then
+          echo "Removing sonar-project.properties (incompatible with MSBuild scanner)"
+          rm sonar-project.properties
+        fi
+
+    - name: Detect project structure
+      id: detect
+      run: |
+        echo "=== Detecting project structure ==="
+        
+        # Chercher les fichiers .sln
+        SLN_FILES=$(find . -maxdepth 2 -name "*.sln")
+        echo "Solution files found:"
+        echo "$SLN_FILES"
+        
+        # Déterminer le fichier principal à utiliser
+        if [ -f "ReRe.sln" ]; then
+          echo "main_file=ReRe.sln" >> $GITHUB_OUTPUT
+          echo "Using ReRe.sln"
+        elif [ $(echo "$SLN_FILES" | wc -l) -eq 1 ] && [ -n "$SLN_FILES" ]; then
+          MAIN_SLN=$(echo "$SLN_FILES" | head -1)
+          echo "main_file=$MAIN_SLN" >> $GITHUB_OUTPUT
+          echo "Using solution file: $MAIN_SLN"
+        else
+          echo "main_file=" >> $GITHUB_OUTPUT
+          echo "Multiple or no solution files found"
+        fi
+
+    - name: Restore dependencies
+      run: |
+        if [ -n "${{ steps.detect.outputs.main_file }}" ]; then
+          echo "Restoring solution: ${{ steps.detect.outputs.main_file }}"
+          dotnet restore "${{ steps.detect.outputs.main_file }}"
+        else
+          echo "Restoring individual projects:"
+          find . -name "*.csproj" -exec dotnet restore {} \;
+        fi
+
+    - name: Begin SonarCloud analysis
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        dotnet sonarscanner begin \
+          /k:"Ohme5083_CesiZen" \
+          /o:"ohme5083" \
+          /d:sonar.token="${SONAR_TOKEN}" \
+          /d:sonar.host.url="https://sonarcloud.io" \
+          /d:sonar.projectBaseDir="${GITHUB_WORKSPACE}" \
+          /d:sonar.sources="." \
+          /d:sonar.exclusions="**/bin/**,**/obj/**,**/Migrations/**,**/wwwroot/**,**/*.js,**/*.css,**/TestResults/**" \
+          /d:sonar.tests="." \
+          /d:sonar.test.inclusions="**/*Tests.cs,**/*Test.cs" \
+          /d:sonar.test.exclusions="**/bin/**,**/obj/**" \
+          /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" \
+          /d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx" \
+          /d:sonar.coverage.exclusions="**/Migrations/**,**/Program.cs,**/wwwroot/**"
+
+    - name: Build solution
+      run: |
+        if [ -n "${{ steps.detect.outputs.main_file }}" ]; then
+          echo "Building solution: ${{ steps.detect.outputs.main_file }}"
+          dotnet build "${{ steps.detect.outputs.main_file }}" --no-restore --configuration Release
+        else
+          echo "Building individual projects:"
+          find . -name "*.csproj" -not -path "*/bin/*" -not -path "*/obj/*" -exec dotnet build {} --no-restore --configuration Release \;
+        fi
+
+    - name: Run tests with coverage
+      run: |
+        # Chercher les projets de test
+        TEST_PROJECTS=$(find . -name "*Tests*.csproj" -o -name "*.Tests.csproj" -o -name "*Test*.csproj" | grep -v "/bin/" | grep -v "/obj/")
+        
+        if [ -z "$TEST_PROJECTS" ]; then
+          echo "No test projects found"
+        else
+          echo "Test projects found:"
+          echo "$TEST_PROJECTS"
+          
+          # Créer le dossier TestResults
+          mkdir -p ./TestResults
+          
+          # Exécuter les tests pour chaque projet de test
+          for test_project in $TEST_PROJECTS; do
+            echo "Running tests for: $test_project"
+            dotnet test "$test_project" \
+              --no-build \
+              --configuration Release \
+              --logger "trx;LogFileName=$(basename $test_project .csproj).trx" \
+              --collect:"XPlat Code Coverage" \
+              --results-directory ./TestResults/ \
+              -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          done
+          
+          echo "=== Test Results ==="
+          find ./TestResults -name "*.xml" -o -name "*.trx" | head -10
+        fi
+
+    - name: End SonarCloud analysis
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: dotnet sonarscanner end /d:sonar.token="${SONAR_TOKEN}"
