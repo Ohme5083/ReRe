@@ -412,6 +412,9 @@ namespace ReRe.Test
             // Act
             var result = await _controller.ChangePassword("password123", "nouveauMotDePasse");
 
+            // Sauvegarder les changements explicitement pour le test
+            await _context.SaveChangesAsync();
+
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("AccountVue", redirectResult.ActionName);
